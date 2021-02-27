@@ -121,4 +121,34 @@ begin
   }
 end
 
+lemma circuit_subset_ind_insert {x} (Aind : m.ind A) (hx : x ∉ A) (Bcirc : m.circuit B) :
+  B ⊆ insert x A → x ∈ B :=
+begin
+  intro Bsub,
+  by_contradiction,
+  rw [subset_insert_iff, erase_eq_of_not_mem h] at Bsub,
+  exact (circuit_dep Bcirc) (ind_subset_def _ _ Bsub Aind),
+end
+
+theorem base_insert_unique_circuit {x} (Abase : m.base A) (hx : x ∉ A) :
+  ∃! C, C ⊆ (insert x A) ∧ m.circuit C :=
+begin
+  have tmp : ¬ m.ind (insert x A) := Abase.2 x hx,
+  obtain ⟨C, Ccirc, Csub⟩ := (dep_iff_contains_circuit _).1 tmp,
+  use [C, Csub, Ccirc],
+  rintro D ⟨Dsub, Dcirc⟩,
+  have Cmem := circuit_subset_ind_insert (Abase.1) hx Ccirc Csub,
+  have Dmem := circuit_subset_ind_insert (Abase.1) hx Dcirc Dsub,
+  by_contradiction,
+  rcases circuit_common_element Dcirc Ccirc h Dmem Cmem with ⟨U, Ucirc, Usub⟩,
+  suffices hUA : U ⊆ A, {
+    exact (circuit_dep Ucirc) (ind_subset_def _ _ hUA Abase.1),
+  }, {
+    have tmp : (D ∪ C) ⊆ (insert x A) := union_subset Dsub Csub,
+    replace tmp := erase_subset_erase x tmp,
+    rw erase_insert hx at tmp,
+    exact subset.trans Usub tmp,
+  }
+end
+
 end matroid
