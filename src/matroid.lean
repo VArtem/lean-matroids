@@ -27,7 +27,7 @@ namespace matroid
 
 @[simp] lemma ind_empty_def : m.ind ∅ := m.ind_empty
 
-@[simp] lemma ind_subset_def : A ⊆ B → m.ind B → m.ind A := m.ind_subset
+@[simp] lemma ind_subset_def : A ⊆ B → m.ind B → m.ind A := m.ind_subset _ _
 
 @[simp] lemma dep_superset {A B} : A ⊆ B → ¬m.ind A → ¬m.ind B := λ h hA hB, hA (m.ind_subset _ _ h hB)
 

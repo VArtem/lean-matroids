@@ -78,4 +78,20 @@ begin
   }
 end
 
+
+lemma not_mem_sdiff_iff {x : X} {A B : finset X} : x ∉ A \ B ↔ x ∉ A ∨ x ∈ B :=
+begin
+  rw not_iff_comm,
+  push_neg, 
+  simp only [mem_sdiff, iff_self],
+end
+
+lemma card_sdiff_ℤ {A B : finset X} (hAB : A ⊆ B) : ((B \ A).card : ℤ) = (B.card : ℤ) - (A.card : ℤ) :=  
+begin
+  suffices h : (B \ A).card + A.card = B.card, {
+    linarith,
+  },
+  rw [card_sdiff hAB, nat.sub_add_cancel (card_le_of_subset hAB)],
+end
+
 end finset

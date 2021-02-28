@@ -127,7 +127,7 @@ begin
   intro Bsub,
   by_contradiction,
   rw [subset_insert_iff, erase_eq_of_not_mem h] at Bsub,
-  exact (circuit_dep Bcirc) (ind_subset_def _ _ Bsub Aind),
+  exact (circuit_dep Bcirc) (ind_subset_def Bsub Aind),
 end
 
 theorem base_insert_unique_circuit {x} (Abase : m.base A) (hx : x ∉ A) :
@@ -142,7 +142,7 @@ begin
   by_contradiction,
   rcases circuit_common_element Dcirc Ccirc h Dmem Cmem with ⟨U, Ucirc, Usub⟩,
   suffices hUA : U ⊆ A, {
-    exact (circuit_dep Ucirc) (ind_subset_def _ _ hUA Abase.1),
+    exact (circuit_dep Ucirc) (ind_subset_def hUA Abase.1),
   }, {
     have tmp : (D ∪ C) ⊆ (insert x A) := union_subset Dsub Csub,
     replace tmp := erase_subset_erase x tmp,

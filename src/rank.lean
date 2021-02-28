@@ -45,6 +45,14 @@ begin
   refine ⟨B, rank_eq_card_base_of Bbase, Bbase⟩,
 end
 
+
+theorem rank_le_card : rank m A ≤ A.card :=
+begin
+  obtain ⟨bA, bAcard, bAbase⟩ := rank_exists_base_of m A,
+  rw bAcard,
+  exact card_le_of_subset bAbase.1,
+end
+
 @[simp] lemma rank_subset (hAB : A ⊆ B) : rank m A ≤ rank m B :=
 begin
   obtain ⟨bA, bAbase⟩ := exists_base_of m A,
@@ -88,14 +96,37 @@ begin
   obtain ⟨bB, bB_base⟩ := exists_base_of m B,
   have rankB := rank_eq_card_base_of bB_base,  
   
-  have indB_sub : (bUnion \ (bA \ bInter)) ⊆ B := sorry,
+  have indB_sub : (bUnion \ (bA \ bInter)) ⊆ B := by {
+    intros x hx,
+    rw [mem_sdiff, not_mem_sdiff_iff] at hx,
+    rcases hx with ⟨xBunion, xA | xInter⟩, {
+      have xAB := bUnion_base.1 xBunion,
+      cases (mem_union.1 xAB), {
+        exfalso,
+        have h_insert_dep := bA_base.2.2 _ xA h,
+        refine h_insert_dep (ind_subset_def _ (bUnion_base.2.1)),
+        rw ← insert_eq_of_mem xBunion,
+        refine insert_subset_insert x bUnion_sub,
+      }, {
+        exact h,
+      }
+    }, {
+      exact mem_of_mem_inter_right (bInter_base.1 xInter),
+    },
+  },
   have indB_ind : m.ind (bUnion \ (bA \ bInter)) := ind_subset_def (sdiff_subset _ _) bUnion_base.2.1,
 
   have tmp := ind_card_le_base_of_card indB_sub indB_ind bB_base,
-  have indB_card : (bUnion \ (bA \ bInter)).card = bUnion.card - (bA.card - bInter.card) := sorry,
+  have indB_card : (bUnion \ (bA \ bInter)).card + bA.card = bUnion.card + bInter.card := by {
+    zify,
+    rw card_sdiff_ℤ (subset.trans (sdiff_subset bA bInter) bUnion_sub),        
+    rw card_sdiff_ℤ bA_sub,
+    ring,
+  },
 
   rw [rankInter, rankA, rankUnion, rankB],
-  sorry,
+  linarith,
 end
+
 
 end matroid
