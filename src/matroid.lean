@@ -19,7 +19,7 @@ structure matroid (α : Type*) [fintype α] [decidable_eq α] :=
   (ind_exchange : ∀ (A B : finset α), ind A → ind B → A.card < B.card →
     (∃ (c ∈ B), (c ∉ A) ∧ ind (insert c A)))
 
-variables {α : Type*} [fintype α] [decidable_eq α] {m : matroid α} {A X : finset α}
+variables {α : Type*} [fintype α] [decidable_eq α] {m : matroid α} {A B X : finset α}
 
 open finset
 
@@ -27,7 +27,7 @@ namespace matroid
 
 @[simp] lemma ind_empty_def : m.ind ∅ := m.ind_empty
 
-@[simp] lemma ind_subset_def : ∀ (A B), A ⊆ B → m.ind B → m.ind A := m.ind_subset
+@[simp] lemma ind_subset_def : A ⊆ B → m.ind B → m.ind A := m.ind_subset
 
 @[simp] lemma dep_superset {A B} : A ⊆ B → ¬m.ind A → ¬m.ind B := λ h hA hB, hA (m.ind_subset _ _ h hB)
 

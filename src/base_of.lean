@@ -9,6 +9,16 @@ open finset
 
 namespace matroid
 
+lemma base_of_refl_iff_ind : m.ind A ↔ m.base_of A A :=
+begin
+  split, {
+    intro Aind,
+    refine ⟨subset.refl _, Aind, λ x hnx hx, absurd hx hnx⟩,
+  }, {
+    exact λ hb, hb.2.1,
+  }
+end
+
 lemma base_of_eq_card (hA : m.base_of X A) (hB : m.base_of X B) : A.card = B.card := 
 begin
   by_contradiction,
